@@ -2,23 +2,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <body>
- 	<form action="${pageContext.request.contextPath}/LoginServlet" method="post">
- 		<table border="1" align="center">
- 			<caption>用户登录</caption>
- 			<tr>
- 				<th>用户名</th>
- 				<td><input type="text" name="username"/></td>
- 			</tr>
- 			<tr>
- 				<th>密码</th>
- 				<td><input type="password" name="password"/></td>
- 			</tr>
- 			<tr>
- 				<td colspan="2" align="center">
- 					<input type="submit" value="提交"/>
- 				</td>
- 			</tr>
- 		</table>
- 	</form>
+  	<form action="${pageContext.request.contextPath}/MyHttpServletRequest" method="get">
+  		用户名：<input type="text" name="username"/>"C:/Users/Administrator/AppData"C:/Users/Administrator/AppData/Local/Temp/HZ$D.432.1765/EncodingFilter.java"/Local/Temp/HZ$D.432.1764/EncodingFilter.java"
+  		<input type="submit" value="提交"/>
+  	</form>
   </body>
 </html>

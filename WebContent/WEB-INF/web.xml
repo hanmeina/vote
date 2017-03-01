@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
   <display-name>myday17</display-name>
+  <error-page>
+    <error-code>500</error-code>
+    <location>/sys_500.jsp</location>
+  </error-page>
   <filter>
     <filter-name>AutoLoginFilter</filter-name>
     <filter-class>com.xjtu.filter.AutoLoginFilter</filter-class>
@@ -17,6 +21,22 @@
     <servlet-name>LoginServlet</servlet-name>
     <servlet-class>com.xjtu.servlet.LoginServlet</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>FromServlet</servlet-name>
+    <servlet-class>com.xjtu.servlet.FromServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>ToServlet</servlet-name>
+    <servlet-class>com.xjtu.servlet.ToServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>FromServlet</servlet-name>
+    <url-pattern>/FromServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ToServlet</servlet-name>
+    <url-pattern>/ToServlet</url-pattern>
+  </servlet-mapping>
   <servlet-mapping>
     <servlet-name>ShowServlet</servlet-name>
     <url-pattern>/ShowServlet</url-pattern>
@@ -38,4 +58,40 @@
     <servlet-name>VoteServlet</servlet-name>
     <url-pattern>/VoteServlet</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>MyHttpServletRequest</display-name>
+    <servlet-name>MyHttpServletRequest</servlet-name>
+    <servlet-class>com.xjtu.servlet.MyHttpServletRequest</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>MyHttpServletRequest</servlet-name>
+    <url-pattern>/MyHttpServletRequest</url-pattern>
+  </servlet-mapping>
+  <filter>
+    <display-name>EncodingFilter</display-name>
+    <filter-name>EncodingFilter</filter-name>
+    <filter-class>com.xjtu.filter.EncodingFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>EncodingFilter</filter-name>
+    <url-pattern>/MyHttpServletRequest</url-pattern>
+  </filter-mapping>
+  <filter>
+    <filter-name>GzipFilter</filter-name>
+    <filter-class>com.xjtu.filter.GzipFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>GzipFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter>
+    <display-name>CacheFilter</display-name>
+    <filter-name>CacheFilter</filter-name>
+    <filter-class>com.xjtu.filter.CacheFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>CacheFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 </web-app>
