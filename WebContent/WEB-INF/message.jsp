@@ -4,5 +4,6 @@
 <html>
   <body>
 	${message} 	
+	<a href="${pageContext.request.contextPath }/welcome.jsp">返回</a>
   </body>
 </html>

@@ -9,9 +9,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.xjtu.vote.domin.Content;
+import com.xjtu.vote.domin.Info;
 import com.xjtu.vote.domin.User;
 import com.xjtu.vote.domin.Vote;
+import com.xjtu.vote.exception.NoVoteException;
+import com.xjtu.vote.exception.OverTicketException;
 import com.xjtu.vote.service.VoteService;
+
+import sun.security.x509.IPAddressName;
 
 /**
  * 投票
@@ -19,7 +24,8 @@ import com.xjtu.vote.service.VoteService;
 public class VoteServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     VoteService voteService = new VoteService();
-	
+    //共享的锁
+  	private Object lock = new Object();
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setCharacterEncoding("text/html;charset=UTF-8"); 
 		String method = request.getParameter("method");
@@ -36,18 +42,90 @@ public class VoteServlet extends HttpServlet {
 		  }else if("exit".equals(method)){
 			  this.exit(request,response);
 			  
+		  }else if("updateVoteById".equals(method)){
+			  this.updateVoteById(request,response);
+		  }else if("findAllInfo".equals(method)){
+			  this.findAllInfo(request, response);
+			  
 		  }
 	  }
 	}
-
 	
+	/**
+	 * 查询所有投票人的信息
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	private void findAllInfo(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+		VoteService voteService = new VoteService();
+		try {
+			List<Info> infoList = voteService.findAllInfo();
+			request.setAttribute("infoList",infoList);
+			request.getRequestDispatcher("/WEB-INF/listAllInfo.jsp").forward(request,response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			request.setAttribute("message","查询所有投票人的信息失败");
+			request.getRequestDispatcher("/WEB-INF/message.jsp").forward(request,response);
+		}
+	}	
+	/**
+	 * 通过id更新候选人信息
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	private void updateVoteById(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		String id  = request.getParameter("id");
+		String  ip = request.getRemoteAddr() ;
+		//System.out.println(ip);
+		try {
+			synchronized (lock) {
+				voteService.updateVoteById(Integer.parseInt(id), ip);
+			}
+			response.sendRedirect(request.getContextPath()+"/welcome.jsp");
+
+		}catch(NoVoteException e){
+			
+			//e.printStackTrace();
+			request.setAttribute("message","<font color='red' size='44'>1分钟之内，不允许再投票</font>");
+			request.getRequestDispatcher("/WEB-INF/message.jsp").forward(request,response);
+		} 
+		catch(OverTicketException e){
+			//e.printStackTrace();
+			request.setAttribute("message","<font color='red' size='44'>投票数不能超过程100票</font>");
+			request.getRequestDispatcher("/WEB-INF/message.jsp").forward(request,response);
+			}
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			request.setAttribute("message", "投票失败");
+			request.getRequestDispatcher("/WEB-INF/message.jsp").forward(request, response);
+		}
+	}
+
+   /**
+    * 退出
+    * @param request
+    * @param response
+    * @throws IOException
+    */
 	private void exit(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		// TODO Auto-generated method stub
 		request.getSession().invalidate();
 		response.sendRedirect(request.getContextPath()+"/welcome.jsp");
 	}
 
-
+    /**
+     * 通过id查询候选人
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
 	private void findVoteById(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String id = request.getParameter("id");
@@ -63,7 +141,13 @@ public class VoteServlet extends HttpServlet {
 	}
 	}
 
-
+    /**
+     * 查询所有候选人信息
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
 	private void findAllVote(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		try {
@@ -92,7 +176,12 @@ public class VoteServlet extends HttpServlet {
 		  }
 	}
 
-
+    /**
+     * 登录
+     * @param request
+     * @param response
+     * @throws IOException
+     */
 	private void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		// TODO Auto-generated method stub
 		

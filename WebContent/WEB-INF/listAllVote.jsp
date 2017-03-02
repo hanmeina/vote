@@ -33,7 +33,7 @@
 				<td>${vote.ticket}</td>
 				<td>
 					<c:if test="${!empty sessionScope.user}">
-						<a href="#" style="text-decoration:none">
+						<a href="${pageContext.request.contextPath}/VoteServlet?method=updateVoteById&id=${vote.id}" style="text-decoration:none">
 							投票
 						</a>
 					</c:if>
@@ -44,6 +44,10 @@
 			<td>
 				<a  style="text-decoration:none"
 					href="${pageContext.request.contextPath}/VoteServlet?method=toLoginJsp">投票登录</a>
+			</td>
+			<td>
+				<a  style="text-decoration:none"
+					href="${pageContext.request.contextPath}/VoteServlet?method=findAllInfo">查询 所有投票人信息</a>
 			</td>
 		</tr>
 	</table>

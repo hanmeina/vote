@@ -8,10 +8,25 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 
+import com.xjtu.vote.domin.Info;
 import com.xjtu.vote.domin.Vote;
 import com.xjtu.vote.util.JdbcUtil;
 
 public class VoteDao {
+	
+	
+	
+	/**
+	 * 通过id更新票数
+	 * @param id
+	 * @throws SQLException
+	 */
+	public void updateVoteById(int id) throws SQLException{
+		  QueryRunner queryRunner = new QueryRunner(JdbcUtil.getDataSource());
+		  String sql = "update vote set ticket = ticket+1 where id = ?";
+		  queryRunner.update(sql, id);
+		
+	}
 	/**
 	 * 查询所有候选人的记录
 	 * @return
