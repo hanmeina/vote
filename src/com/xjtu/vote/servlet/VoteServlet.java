@@ -1,13 +1,16 @@
 package com.xjtu.vote.servlet;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.xjtu.vote.domin.Admin;
 import com.xjtu.vote.domin.Content;
 import com.xjtu.vote.domin.Info;
 import com.xjtu.vote.domin.User;
@@ -47,10 +50,18 @@ public class VoteServlet extends HttpServlet {
 		  }else if("findAllInfo".equals(method)){
 			  this.findAllInfo(request, response);
 			  
-		  }
+		  }else if ("tobackLogin".equals(method)) {
+			  
+			this.tobackLogin(request,response);
+		}
 	  }
 	}
 	
+	private void tobackLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		request.getRequestDispatcher("/WEB-INF/backLogin.jsp").forward(request, response);
+	}
+
 	/**
 	 * 查询所有投票人的信息
 	 * @param request
@@ -151,8 +162,12 @@ public class VoteServlet extends HttpServlet {
 	private void findAllVote(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		try {
+			//按自然顺序查询候选人信息
 			List<Vote> voteList = voteService.findAllVote();
+			//按热门度查询候选人信息
+			List<Vote> voteListDesc = voteService.findAllVoteByDesc();
 			request.setAttribute("voteList",voteList);
+			request.setAttribute("voteListDesc",voteListDesc);
 			request.getRequestDispatcher("/WEB-INF/listAllVote.jsp").forward(request, response);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -171,27 +186,76 @@ public class VoteServlet extends HttpServlet {
 		  if(method!=null){
 			  if("login".equals(method)){
 				  this.login(request,response);
+			  }else if("backLogin".equals(method)){
+				  this.backLogin(request,response);
+				  
 			  }
 			
 		  }
 	}
+     /**
+      * 管理员登陆
+      * @param request
+      * @param response
+     * @throws IOException 
+     * @throws ServletException 
+      */
+    private void backLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+    	try {
+			String username = request.getParameter("username");
+			String password = request.getParameter("password");
+			VoteService voteService = new VoteService();
+			Admin admin = voteService.findAdminByUsernameAndPassword(username,password);
+			//管理员指令正确
+			if(admin!=null){
+				request.getRequestDispatcher("/WEB-INF/backMain.jsp").forward(request,response);
+			}else{
+				request.setAttribute("message","管理员指令错误");
+				request.getRequestDispatcher("/WEB-INF/message.jsp").forward(request,response);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			request.setAttribute("message","管理员指令错误");
+			request.getRequestDispatcher("/WEB-INF/message.jsp").forward(request,response);
+		}
+	}
 
-    /**
+	/**
      * 登录
      * @param request
      * @param response
      * @throws IOException
+     * @throws ServletException 
      */
-	private void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private void login(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		// TODO Auto-generated method stub
-		
-		
+			
 		String username = request.getParameter("username");
-		if(username!=null && username.trim().length()>0){
-			User user = new User();
-			user.setUsername(username);  
-		request.getSession().setAttribute("user", user);
-	    response.sendRedirect(request.getContextPath()+"/welcome.jsp");
+		if(username!=null && username.trim().length()>0){		
+          ServletContext  context = this.getServletContext();
+		    List<String> usernameList = (List<String>)context.getAttribute("usernameList");
+			if(usernameList == null){
+				usernameList = new ArrayList<>();
+				context.setAttribute("usernameList",usernameList );
+				
+			}
+			//判段该用户是否已在线
+	        boolean flag =	voteService.checkOnline(username,usernameList);
+			if(!flag){
+				//不在线
+				User user = new User();
+				user.setUsername(username);  
+		     	request.getSession().setAttribute("user", user);
+		        response.sendRedirect(request.getContextPath()+"/welcome.jsp");
+				
+			}else{
+				//在线
+				request.setAttribute("message", "该用户已在线");
+				request.getRequestDispatcher("/WEB-INF/message.jsp").forward(request, response);
+				
+			}
+			
 		}	
 	}
     

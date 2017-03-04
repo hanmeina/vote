@@ -7,6 +7,12 @@
 	<table border="1" align="center" width="60%">
 		<caption><h1>候选人详细信息</h1></caption>
 		<tr>
+			<th>头像</th>
+			<td>
+			<img alt="" src="${content.image.path}" width="100px" height="90px">
+			</td>
+		</tr>	
+		<tr>
 			<th>人名</th>
 			<td>${content.vote.content}</td>
 		</tr>	

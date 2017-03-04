@@ -6,7 +6,18 @@ public class Content {
 	 private int age;
 	 private String description;
 	 private Vote vote; 
+	 private Image image;
+	 
 	 public Content(){}
+	 
+	public Image getImage() {
+		return image;
+	}
+
+	public void setImage(Image image) {
+		this.image = image;
+	}
+
 	public int getId() {
 		return id;
 	}

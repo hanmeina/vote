@@ -20,6 +20,7 @@
 		<caption><h1>投票人信息</h1></caption>
 		<tr>
 			<th>IP地址</th>
+			<th>归属地</th>
 			<th>最后投票时间</th>
 		</tr>
 		<c:forEach var="info" items="${requestScope.infoList}">
@@ -27,6 +28,10 @@
 				<td>
 					${info.ip}
 				</td>
+				<td>
+					${!empty info.address.location?info.address.location:'佛山'}
+				</td>
+				
 				<td align="center">
 					<fmt:formatDate
 						type="both"

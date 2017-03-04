@@ -36,10 +36,23 @@ public class VoteDao {
 	   List<Vote> voteList = new ArrayList<>();
 	    QueryRunner queryRunner = new QueryRunner(JdbcUtil.getDataSource());
 	    String sql = "select * from vote";
-	   voteList = (List<Vote>) queryRunner.query(sql, new BeanListHandler(Vote.class));
+	    voteList = (List<Vote>) queryRunner.query(sql, new BeanListHandler(Vote.class));
 	   
 	   return voteList;
    }
+   /**
+	 * 查询所有候选人的记录[热门候选人]
+	 * @return
+	 * @throws SQLException
+	 */
+  public List<Vote> findAllVoteByDesc() throws SQLException{
+	   List<Vote> voteList = new ArrayList<>();
+	    QueryRunner queryRunner = new QueryRunner(JdbcUtil.getDataSource());
+	    String sql = "select * from vote order by ticket desc";
+	    voteList = (List<Vote>) queryRunner.query(sql, new BeanListHandler(Vote.class));
+	   
+	   return voteList;
+  }
    /**
     * 通过id查询Vote
     * @param id
